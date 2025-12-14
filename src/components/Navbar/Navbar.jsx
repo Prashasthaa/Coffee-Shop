@@ -1,12 +1,42 @@
-import React from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+import React, { useState } from "react";
+import {
+  AppBar,
+  Box,
+  useMediaQuery,
+  useTheme,
+  Drawer,
+  Toolbar,
+  Typography,
+  Container,
+  Button,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  IconButton,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import CoffeeIcon from "@mui/icons-material/Coffee";
-import Button from "@mui/material/Button";
 
 function Navbar() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
+  };
+
+  const drawerLinks = [
+    {
+      text: "Home",
+      link: "#home",
+    },
+    {
+      text: "Coffee",
+      link: "#coffee",
+    },
+  ];
+
   return (
     <>
       <AppBar position="sticky" color="primary">
@@ -20,15 +50,47 @@ function Navbar() {
               Coffee Shop
             </Typography>
 
-            <Button color="inherit" href="#home">
-              Home
-            </Button>
-            <Button color="inherit" href="#cofffee">
-              Coffee
-            </Button>
+            {isMobile && (
+              <IconButton color="inherit" onClick={toggleDrawer(true)}>
+                <MenuIcon />
+              </IconButton>
+            )}
+
+            {!isMobile && (
+              <>
+                <Button color="inherit" href="#home">
+                  Home
+                </Button>
+                <Button color="inherit" href="#cofffee">
+                  Coffee
+                </Button>
+              </>
+            )}
           </Toolbar>
         </Container>
       </AppBar>
+      <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+        <Box
+          sx={{ width: 200 }}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+        >
+          <List>
+            {drawerLinks.map((linkItem, index) => (
+              <ListItem key={index} disablePadding>
+                <ListItemButton
+                  component="a"
+                  href={linkItem.link}
+                  onClick={toggleDrawer(false)}
+                  aria-label={`Navigate to ${linkItem.text}`}
+                >
+                  <ListItemText primary={linkItem.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
     </>
   );
 }
